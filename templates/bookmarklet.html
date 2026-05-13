@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一键收藏 — 安装小书签</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        h1 { font-size: 24px; margin-bottom: 8px; }
+        p { color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+        .bookmarklet-btn {
+            display: inline-block;
+            background: #4f46e5;
+            color: #fff;
+            padding: 14px 36px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: grab;
+            text-decoration: none;
+            margin-bottom: 12px;
+            transition: opacity 0.15s;
+        }
+        .bookmarklet-btn:hover { opacity: 0.9; }
+        .bookmarklet-btn:active { cursor: grabbing; }
+        .hint {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 32px;
+        }
+        .steps {
+            text-align: left;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px 24px;
+        }
+        .steps h3 { font-size: 14px; margin-bottom: 10px; }
+        .steps ol { font-size: 13px; color: #64748b; padding-left: 20px; }
+        .steps li { margin-bottom: 6px; }
+        code {
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔖 一键收藏</h1>
+        <p>把下面按钮拖到浏览器书签栏，浏览任何网页时点一下就能保存到收藏管理器。</p>
+
+        <a class="bookmarklet-btn" href="javascript:(function(){var d=document;var u=d.location.href;var t=d.title||'';var s=location.hostname.replace('www.','');fetch('http://localhost:5000/api/bookmarks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u,title:t,source:'',tags:''})}).then(function(r){return r.json()}).then(function(){var e=d.createElement('div');e.style.cssText='position:fixed;top:20px;right:20px;background:#22c55e;color:#fff;padding:10px 18px;border-radius:8px;z-index:99999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.2)';e.textContent='✓ 已收藏';d.body.appendChild(e);setTimeout(function(){e.remove()},2000)}).catch(function(){alert('收藏失败，请确认收藏管理器已启动')})})();">📑 收藏到工具箱</a>
+
+        <p class="hint">↑ 拖拽到书签栏，或右键 → 添加到书签</p>
+
+        <div class="steps">
+            <h3>使用方法</h3>
+            <ol>
+                <li>把上面按钮拖到浏览器 <code>书签栏</code></li>
+                <li>浏览任意网页（微信公众号文章、知乎、博客等）</li>
+                <li>点一下书签栏里的 <code>📑 收藏到工具箱</code></li>
+                <li>页面右上角闪现「✓ 已收藏」即成功</li>
+                <li>打开 <a href="/" target="_blank">收藏管理器</a> 就能看到</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

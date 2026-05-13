@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收藏管理器</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h1>📑 收藏</h1>
+                <button class="btn-close-sidebar" onclick="toggleSidebar()">&times;</button>
+            </div>
+            <div class="category-section">
+                <div class="category-header">
+                    <span>分类</span>
+                    <button class="btn-sm" onclick="showAddCategory()">+</button>
+                </div>
+                <ul id="categoryList" class="category-list"></ul>
+            </div>
+            <div class="tag-section">
+                <div class="category-header">
+                    <span>标签</span>
+                </div>
+                <div id="tagList" class="tag-list"></div>
+            </div>
+            <div class="sidebar-actions">
+                <button class="btn-outline" onclick="toggleAllUnread()">只显示未读</button>
+                <button class="btn-outline" onclick="exportData()">导出</button>
+                <label class="btn-outline" style="cursor:pointer;text-align:center;">
+                    导入
+                    <input type="file" accept=".json" hidden onchange="importData(event)">
+                </label>
+                <a href="/bookmarklet" target="_blank" class="btn-outline" style="text-decoration:none;display:block;text-align:center;">🔖 一键收藏</a>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <!-- Top bar -->
+            <header class="top-bar">
+                <button class="btn-menu" onclick="toggleSidebar()">☰</button>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="搜索标题、URL、笔记..." oninput="debouncedSearch()">
+                    <button onclick="clearSearch()" id="clearBtn" class="btn-clear hidden">&times;</button>
+                </div>
+                <button class="btn-primary" onclick="showAddBookmark()">+ 添加</button>
+            </header>
+
+            <!-- Filter chips -->
+            <div id="filterBar" class="filter-bar hidden">
+                <span id="filterLabel" class="filter-label"></span>
+                <button class="btn-clear-filter" onclick="clearFilters()">✕ 清除</button>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-bar">
+                <span id="statsTotal">0 条收藏</span>
+                <span id="statsUnread" class="unread-count"></span>
+            </div>
+
+            <!-- Bookmark list -->
+            <div id="bookmarkList" class="bookmark-list">
+                <div class="empty-state" id="emptyState">
+                    <p>还没有收藏，点「+ 添加」开始吧</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal" class="modal-overlay hidden" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalTitle">添加收藏</h2>
+                <button class="btn-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="bookmarkForm" onsubmit="saveBookmark(event)">
+                <input type="hidden" id="editId">
+                <div class="form-group">
+                    <label>URL <span class="required">*</span></label>
+                    <div class="url-input-row">
+                        <input type="url" id="inputUrl" required placeholder="https://..." onblur="autoFetchMeta()">
+                        <button type="button" class="btn-sm" onclick="autoFetchMeta()" title="自动获取信息">↻</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" id="inputTitle" placeholder="文章标题">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>来源</label>
+                        <input type="text" id="inputSource" placeholder="公众号/网站名">
+                    </div>
+                    <div class="form-group">
+                        <label>分类</label>
+                        <select id="inputCategory"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>标签（逗号分隔）</label>
+                    <input type="text" id="inputTags" placeholder="e.g. 深度学习, NLP">
+                </div>
+                <div class="form-group">
+                    <label>笔记</label>
+                    <textarea id="inputNotes" rows="3" placeholder="阅读笔记摘要..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category modal -->
+    <div id="catModal" class="modal-overlay hidden" onclick="closeCatModal(event)">
+        <div class="modal-content modal-sm" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="catModalTitle">新建分类</h2>
+                <button class="btn-close" onclick="closeCatModal()">&times;</button>
+            </div>
+            <form onsubmit="saveCategory(event)">
+                <input type="hidden" id="editCatId">
+                <div class="form-group">
+                    <label>分类名称</label>
+                    <input type="text" id="inputCatName" required placeholder="输入分类名">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeCatModal()">取消</button>
+                    <button type="submit" class="btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
